@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: pricehawk-gateway
+  main:
+    web-application-type: reactive
   data:
     redis:
       host: ${REDIS_HOST:localhost}

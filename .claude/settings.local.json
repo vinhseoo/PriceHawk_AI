@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(grep -v \".md$\")",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(where gh *)",
+      "Read(//mnt/c/Users/maidu/OneDrive/Desktop/PriceHawk_AI/**)",
+      "Bash(mvn clean *)",
+      "Bash(timeout 30 mvn spring-boot:run -pl pricehawk-user-service)",
+      "Bash(timeout 35 mvn spring-boot:run -pl pricehawk-user-service -am)",
+      "Bash(timeout 40 mvn spring-boot:run)",
+      "Bash(docker-compose *)"
     ]
   }
 }
