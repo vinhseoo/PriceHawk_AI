@@ -3,10 +3,10 @@ version: '3.8'
 services:
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: smartcart-postgres
+    container_name: pricehawk-postgres
     environment:
-      POSTGRES_USER: smartcart
-      POSTGRES_PASSWORD: smartcart_secret
+      POSTGRES_USER: pricehawk
+      POSTGRES_PASSWORD: pricehawk_secret
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
@@ -14,14 +14,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init-databases.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U smartcart"]
+      test: ["CMD-SHELL", "pg_isready -U pricehawk"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: smartcart-redis
+    container_name: pricehawk-redis
     ports:
       - "6379:6379"
     volumes:
@@ -34,10 +34,10 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
-    container_name: smartcart-rabbitmq
+    container_name: pricehawk-rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: smartcart
-      RABBITMQ_DEFAULT_PASS: smartcart_secret
+      RABBITMQ_DEFAULT_USER: pricehawk
+      RABBITMQ_DEFAULT_PASS: pricehawk_secret
     ports:
       - "5672:5672"
       - "15672:15672"

@@ -6,7 +6,7 @@ import { Providers } from '@/components/Providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: { default: 'SmartCart AI — So sánh giá & phân tích đánh giá thông minh', template: '%s | SmartCart AI' },
+  title: { default: 'PriceHawk AI — So sánh giá & phân tích đánh giá thông minh', template: '%s | PriceHawk AI' },
   description: 'So sánh giá từ Shopee, Lazada, Tiki và hàng trăm website bán hàng. AI phân tích review thật, phát hiện giá ảo.',
   keywords: ['so sánh giá', 'mua sắm thông minh', 'review thật', 'giá tốt nhất'],
 };

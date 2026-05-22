@@ -20,7 +20,7 @@ export function SearchHero() {
 
   return (
     <section className="flex flex-col items-center justify-center px-4 pt-24 pb-16">
-      <h1 className="mb-2 text-4xl font-bold text-gray-900">SmartCart AI</h1>
+      <h1 className="mb-2 text-4xl font-bold text-gray-900">PriceHawk AI</h1>
       <p className="mb-8 text-lg text-gray-500">
         So sánh giá & phân tích review thông minh từ mọi nguồn
       </p>

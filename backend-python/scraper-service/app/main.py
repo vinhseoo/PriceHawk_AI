@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="SmartCart Scraper Service",
+    title="PriceHawk Scraper Service",
     description="3-tier intelligent web scraping service",
     version="1.0.0",
     lifespan=lifespan,

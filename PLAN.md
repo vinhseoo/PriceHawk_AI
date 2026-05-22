@@ -1,4 +1,4 @@
-# SmartCart AI — Development Plan & Progress Tracker
+# PriceHawk AI — Development Plan & Progress Tracker
 
 > Cập nhật trạng thái task ngay khi hoàn thành. Mỗi task phải có test trước khi đánh dấu ✅.
 > Legend: ✅ Done | 🔄 In Progress | ⬜ Pending
@@ -9,16 +9,16 @@
 > Mục tiêu: Dựng bộ khung. Sau phase này, thêm service mới chỉ cần inherit.
 
 - ✅ **1.1** Parent POM + Maven multi-module structure (`mvn clean install` pass)
-- ✅ **1.2** `smartcart-common` — ApiResponse, PageResponse, GlobalExceptionHandler, Exceptions, Enums (Platform, SourceType, ScraperTier), Event DTOs, Constants
-- ✅ **1.3** `smartcart-security-starter` — JwtTokenProvider, JwtProperties, SecurityAutoConfiguration
-- ✅ **1.4** `smartcart-data-starter` — BaseEntity (UUID + JPA auditing), BaseRepository, DataAutoConfiguration
-- ✅ **1.5** `smartcart-messaging-starter` — RabbitMQConfig (exchanges + queues + bindings), EventPublisher, MessagingAutoConfiguration
+- ✅ **1.2** `pricehawk-common` — ApiResponse, PageResponse, GlobalExceptionHandler, Exceptions, Enums (Platform, SourceType, ScraperTier), Event DTOs, Constants
+- ✅ **1.3** `pricehawk-security-starter` — JwtTokenProvider, JwtProperties, SecurityAutoConfiguration
+- ✅ **1.4** `pricehawk-data-starter` — BaseEntity (UUID + JPA auditing), BaseRepository, DataAutoConfiguration
+- ✅ **1.5** `pricehawk-messaging-starter` — RabbitMQConfig (exchanges + queues + bindings), EventPublisher, MessagingAutoConfiguration
 - ✅ **1.6** Python `shared/` — config.py, models.py (mirror Java DTOs), rabbitmq_client.py, exceptions.py, utils.py
 - ✅ **1.7** `docker-compose.yml` — PostgreSQL (pgvector, init 3 DBs), Redis, RabbitMQ + `scripts/init-databases.sql`
-- ✅ **1.8** `smartcart-gateway` — Routing (6 services), JwtAuthGatewayFilter, CORS, application.yml
-- ✅ **1.9** `smartcart-user-service` — Scaffold: Application, SecurityConfig, application.yml, Flyway V1 migration
-- ✅ **1.10** `smartcart-catalog-service` — Scaffold: Application, application.yml, Flyway V1 migration (pgvector + full schema)
-- ✅ **1.11** `smartcart-notification-service` — Scaffold: Application, WebSocketConfig, application.yml
+- ✅ **1.8** `pricehawk-gateway` — Routing (6 services), JwtAuthGatewayFilter, CORS, application.yml
+- ✅ **1.9** `pricehawk-user-service` — Scaffold: Application, SecurityConfig, application.yml, Flyway V1 migration
+- ✅ **1.10** `pricehawk-catalog-service` — Scaffold: Application, application.yml, Flyway V1 migration (pgvector + full schema)
+- ✅ **1.11** `pricehawk-notification-service` — Scaffold: Application, WebSocketConfig, application.yml
 - ✅ **1.12** Scraper Service scaffold — FastAPI app, 3-tier structure (tier1/2/3), Alembic migration, SQLAlchemy models
 - ✅ **1.13** AI Analyzer Service scaffold — FastAPI app, LLM clients (OpenAI + Anthropic), SemanticCache
 - ✅ **1.14** Frontend scaffold — Next.js 14, TypeScript types, apiClient, Zustand stores, TanStack Query hooks, routing

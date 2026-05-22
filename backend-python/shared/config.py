@@ -6,8 +6,8 @@ class Settings(BaseSettings):
     # PostgreSQL
     POSTGRES_HOST: str = "localhost"
     POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str = "smartcart"
-    POSTGRES_PASSWORD: str = "smartcart_secret"
+    POSTGRES_USER: str = "pricehawk"
+    POSTGRES_PASSWORD: str = "pricehawk_secret"
 
     # Redis
     REDIS_HOST: str = "localhost"
@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     # RabbitMQ
     RABBITMQ_HOST: str = "localhost"
     RABBITMQ_PORT: int = 5672
-    RABBITMQ_USER: str = "smartcart"
-    RABBITMQ_PASSWORD: str = "smartcart_secret"
+    RABBITMQ_USER: str = "pricehawk"
+    RABBITMQ_PASSWORD: str = "pricehawk_secret"
 
     # AI Keys
     OPENAI_API_KEY: str = ""

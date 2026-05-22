@@ -1,0 +1,21 @@
+server:
+  port: ${NOTIFICATION_SERVICE_PORT:8085}
+
+spring:
+  application:
+    name: pricehawk-notification-service
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:pricehawk}
+    password: ${RABBITMQ_PASSWORD:pricehawk_secret}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

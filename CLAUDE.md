@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SmartCart AI — Multi-language microservices shopping assistant. Java (Gateway + 3 services) + Python (2 services) + Next.js frontend.
+PriceHawk AI — Multi-language microservices shopping assistant. Java (Gateway + 3 services) + Python (2 services) + Next.js frontend.
 
 ## Service Ports & Routing
 
@@ -30,7 +30,7 @@ docker-compose ps
 docker-compose down -v && docker-compose up -d
 ```
 
-Credentials: `smartcart` / `smartcart_secret`
+Credentials: `pricehawk` / `pricehawk_secret`
 RabbitMQ Management UI: http://localhost:15672
 
 ## Cross-Service Contracts
@@ -39,13 +39,13 @@ RabbitMQ Management UI: http://localhost:15672
 
 | Event | Exchange | Routing Key | Producer → Consumer |
 |---|---|---|---|
-| Scrape request | `smartcart.scrape` | `scrape.request` | Catalog → Scraper |
-| Product scraped | `smartcart.scrape` | `product.scraped` | Scraper → Catalog |
-| Analysis request | `smartcart.analysis` | `analysis.request` | Catalog → AI |
-| Analysis completed | `smartcart.analysis` | `analysis.completed` | AI → Catalog, Notification |
-| Price updated | `smartcart.price` | `price.updated` | Catalog → Notification |
+| Scrape request | `pricehawk.scrape` | `scrape.request` | Catalog → Scraper |
+| Product scraped | `pricehawk.scrape` | `product.scraped` | Scraper → Catalog |
+| Analysis request | `pricehawk.analysis` | `analysis.request` | Catalog → AI |
+| Analysis completed | `pricehawk.analysis` | `analysis.completed` | AI → Catalog, Notification |
+| Price updated | `pricehawk.price` | `price.updated` | Catalog → Notification |
 
-Event DTOs live in `backend-java/smartcart-common/src/main/java/com/smartcart/common/event/`.
+Event DTOs live in `backend-java/pricehawk-common/src/main/java/com/pricehawk/common/event/`.
 Python mirrors are in `backend-python/shared/models.py`.
 
 ### Gateway Routes
@@ -141,7 +141,7 @@ async def test_scrape_url_returns_job_id(client: AsyncClient):
 
 ## When Adding a New Feature
 
-1. Check if the change affects shared contracts (events, DTOs) — update `smartcart-common` and `backend-python/shared/models.py` together.
+1. Check if the change affects shared contracts (events, DTOs) — update `pricehawk-common` and `backend-python/shared/models.py` together.
 2. If adding a new scraper website (Tier 2), insert into `scraper_configs` table via SQL seed — no code change.
 3. Database changes: always via Flyway migration (Java) or Alembic migration (Python). Never modify schema manually.
 4. New API endpoints must follow path convention `/api/v1/{resource}/{action}`.

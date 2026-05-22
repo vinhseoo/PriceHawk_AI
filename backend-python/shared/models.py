@@ -1,4 +1,4 @@
-"""Pydantic event models — must mirror Java DTOs in smartcart-common exactly."""
+"""Pydantic event models — must mirror Java DTOs in pricehawk-common exactly."""
 from datetime import datetime
 from enum import Enum
 from typing import Any

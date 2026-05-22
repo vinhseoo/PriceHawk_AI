@@ -3,11 +3,11 @@
 ## Module Structure
 
 Maven multi-module. Build order (enforced by Maven):
-1. `smartcart-common` — DTOs, exceptions, enums, event models, constants
-2. `smartcart-security-starter` — JWT provider, auth filter (auto-configured)
-3. `smartcart-data-starter` — BaseEntity (UUID + JPA auditing), BaseRepository (auto-configured)
-4. `smartcart-messaging-starter` — RabbitMQ config, queues, EventPublisher (auto-configured)
-5. Service modules: `smartcart-gateway`, `smartcart-user-service`, `smartcart-catalog-service`, `smartcart-notification-service`
+1. `pricehawk-common` — DTOs, exceptions, enums, event models, constants
+2. `pricehawk-security-starter` — JWT provider, auth filter (auto-configured)
+3. `pricehawk-data-starter` — BaseEntity (UUID + JPA auditing), BaseRepository (auto-configured)
+4. `pricehawk-messaging-starter` — RabbitMQ config, queues, EventPublisher (auto-configured)
+5. Service modules: `pricehawk-gateway`, `pricehawk-user-service`, `pricehawk-catalog-service`, `pricehawk-notification-service`
 
 ## Build Commands
 
@@ -18,13 +18,13 @@ cd backend-java
 mvn clean install -DskipTests
 
 # Build single module
-mvn clean install -pl smartcart-user-service -am -DskipTests
+mvn clean install -pl pricehawk-user-service -am -DskipTests
 
 # Run tests
-mvn test -pl smartcart-user-service
+mvn test -pl pricehawk-user-service
 
 # Run a service
-mvn spring-boot:run -pl smartcart-user-service
+mvn spring-boot:run -pl pricehawk-user-service
 ```
 
 ## Architecture Pattern (ALL services must follow)
@@ -79,15 +79,15 @@ eventPublisher.publish(
 
 - Gateway validates JWT, injects `X-User-Id` and `X-User-Roles` headers.
 - Downstream services trust these headers — they do NOT re-validate JWT.
-- Only User Service needs `smartcart-security-starter` for generating tokens.
+- Only User Service needs `pricehawk-security-starter` for generating tokens.
 - Other Java services just read `X-User-Id` header.
 
 ## application.yml Pattern
 
 All services follow identical env var naming:
-- DB: `${POSTGRES_HOST:localhost}`, `${POSTGRES_PORT:5432}`, `${POSTGRES_USER:smartcart}`, `${POSTGRES_PASSWORD:smartcart_secret}`
+- DB: `${POSTGRES_HOST:localhost}`, `${POSTGRES_PORT:5432}`, `${POSTGRES_USER:pricehawk}`, `${POSTGRES_PASSWORD:pricehawk_secret}`
 - Redis: `${REDIS_HOST:localhost}`, `${REDIS_PORT:6379}`
-- RabbitMQ: `${RABBITMQ_HOST:localhost}`, `${RABBITMQ_PORT:5672}`, `${RABBITMQ_USER:smartcart}`, `${RABBITMQ_PASSWORD:smartcart_secret}`
+- RabbitMQ: `${RABBITMQ_HOST:localhost}`, `${RABBITMQ_PORT:5672}`, `${RABBITMQ_USER:pricehawk}`, `${RABBITMQ_PASSWORD:pricehawk_secret}`
 
 ## Page Responses
 

@@ -1,4 +1,4 @@
--- SmartCart AI — Initialize all databases
+-- PriceHawk AI — Initialize all databases
 CREATE DATABASE user_db;
 CREATE DATABASE catalog_db;
 CREATE DATABASE scraper_db;

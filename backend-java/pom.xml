@@ -11,21 +11,21 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.smartcart</groupId>
-    <artifactId>smartcart-parent</artifactId>
+    <groupId>com.pricehawk</groupId>
+    <artifactId>pricehawk-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>SmartCart AI — Parent</name>
+    <name>PriceHawk AI — Parent</name>
 
     <modules>
-        <module>smartcart-common</module>
-        <module>smartcart-security-starter</module>
-        <module>smartcart-data-starter</module>
-        <module>smartcart-messaging-starter</module>
-        <module>smartcart-gateway</module>
-        <module>smartcart-user-service</module>
-        <module>smartcart-catalog-service</module>
-        <module>smartcart-notification-service</module>
+        <module>pricehawk-common</module>
+        <module>pricehawk-security-starter</module>
+        <module>pricehawk-data-starter</module>
+        <module>pricehawk-messaging-starter</module>
+        <module>pricehawk-gateway</module>
+        <module>pricehawk-user-service</module>
+        <module>pricehawk-catalog-service</module>
+        <module>pricehawk-notification-service</module>
     </modules>
 
     <properties>
@@ -48,23 +48,23 @@
             </dependency>
             <!-- Internal modules -->
             <dependency>
-                <groupId>com.smartcart</groupId>
-                <artifactId>smartcart-common</artifactId>
+                <groupId>com.pricehawk</groupId>
+                <artifactId>pricehawk-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.smartcart</groupId>
-                <artifactId>smartcart-security-starter</artifactId>
+                <groupId>com.pricehawk</groupId>
+                <artifactId>pricehawk-security-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.smartcart</groupId>
-                <artifactId>smartcart-data-starter</artifactId>
+                <groupId>com.pricehawk</groupId>
+                <artifactId>pricehawk-data-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.smartcart</groupId>
-                <artifactId>smartcart-messaging-starter</artifactId>
+                <groupId>com.pricehawk</groupId>
+                <artifactId>pricehawk-messaging-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- JWT -->

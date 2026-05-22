@@ -10,9 +10,9 @@ from shared.config import settings
 
 logger = logging.getLogger(__name__)
 
-SCRAPE_EXCHANGE = "smartcart.scrape"
-ANALYSIS_EXCHANGE = "smartcart.analysis"
-PRICE_EXCHANGE = "smartcart.price"
+SCRAPE_EXCHANGE = "pricehawk.scrape"
+ANALYSIS_EXCHANGE = "pricehawk.analysis"
+PRICE_EXCHANGE = "pricehawk.price"
 
 SCRAPE_REQUEST_QUEUE = "scrape.request.queue"
 PRODUCT_SCRAPED_QUEUE = "product.scraped.queue"

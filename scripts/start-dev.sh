@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Starting SmartCart AI infrastructure..."
+echo "🚀 Starting PriceHawk AI infrastructure..."
 
 # Start infrastructure
 docker-compose up -d postgres redis rabbitmq
@@ -14,4 +14,4 @@ echo "  PostgreSQL: localhost:5432"
 echo "  Redis:      localhost:6379"
 echo "  RabbitMQ:   localhost:5672 (Management: http://localhost:15672)"
 echo ""
-echo "Credentials: smartcart / smartcart_secret"
+echo "Credentials: pricehawk / pricehawk_secret"

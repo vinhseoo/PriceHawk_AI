@@ -29,6 +29,6 @@ export const useAuthStore = create<AuthState>()(
         set({ user: null, accessToken: null, isAuthenticated: false });
       },
     }),
-    { name: 'smartcart-auth', partialize: (state) => ({ user: state.user }) }
+    { name: 'pricehawk-auth', partialize: (state) => ({ user: state.user }) }
   )
 );
