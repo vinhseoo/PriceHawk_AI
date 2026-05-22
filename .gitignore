@@ -1,0 +1,37 @@
+# Java
+backend-java/**/target/
+backend-java/**/*.class
+backend-java/**/.classpath
+backend-java/**/.project
+backend-java/**/.settings/
+
+# Python
+backend-python/**/__pycache__/
+backend-python/**/*.pyc
+backend-python/**/*.pyo
+backend-python/**/.venv/
+backend-python/**/venv/
+backend-python/**/.env
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+
+# Environment
+.env
+*.env
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
