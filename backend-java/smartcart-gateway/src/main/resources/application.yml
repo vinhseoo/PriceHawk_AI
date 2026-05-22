@@ -1,0 +1,63 @@
+server:
+  port: ${GATEWAY_PORT:8080}
+
+spring:
+  application:
+    name: smartcart-gateway
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cloud:
+    gateway:
+      routes:
+        - id: user-auth
+          uri: http://${USER_SERVICE_HOST:localhost}:${USER_SERVICE_PORT:8081}
+          predicates:
+            - Path=/api/v1/auth/**
+        - id: user-profile
+          uri: http://${USER_SERVICE_HOST:localhost}:${USER_SERVICE_PORT:8081}
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - name: JwtAuthGatewayFilter
+        - id: catalog-products
+          uri: http://${CATALOG_SERVICE_HOST:localhost}:${CATALOG_SERVICE_PORT:8082}
+          predicates:
+            - Path=/api/v1/products/**
+        - id: catalog-search
+          uri: http://${CATALOG_SERVICE_HOST:localhost}:${CATALOG_SERVICE_PORT:8082}
+          predicates:
+            - Path=/api/v1/search/**
+        - id: scraper
+          uri: http://${SCRAPER_SERVICE_HOST:localhost}:${SCRAPER_SERVICE_PORT:8083}
+          predicates:
+            - Path=/api/v1/scrape/**
+          filters:
+            - name: JwtAuthGatewayFilter
+        - id: ai-analyzer
+          uri: http://${AI_SERVICE_HOST:localhost}:${AI_SERVICE_PORT:8084}
+          predicates:
+            - Path=/api/v1/analysis/**
+        - id: notification-ws
+          uri: http://${NOTIFICATION_SERVICE_HOST:localhost}:${NOTIFICATION_SERVICE_PORT:8085}
+          predicates:
+            - Path=/ws/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+smartcart:
+  jwt:
+    secret: ${JWT_SECRET:c21hcnRjYXJ0LWp3dC1zZWNyZXQta2V5LWZvci1kZXZlbG9wbWVudC1vbmx5LW5vdC1mb3ItcHJvZHVjdGlvbg==}
+    access-expiry-ms: ${JWT_ACCESS_EXPIRY_MS:900000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
