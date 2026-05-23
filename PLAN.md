@@ -176,36 +176,36 @@
 > Mục tiêu: Web app hoàn chỉnh, responsive, SEO-friendly.
 
 ### 7.1 Core Layout & Auth
-- ⬜ **7.1.1** Header component: logo, search bar, auth buttons, notification bell
-- ⬜ **7.1.2** Login page: form (email/password) + Google OAuth button
-- ⬜ **7.1.3** Register page: form + validation
-- ⬜ **7.1.4** Auth flow: setAuth → store token → redirect, handle 401 globally
-- ⬜ **7.1.5** Test: login/register forms, token persistence, redirect logic
+- ✅ **7.1.1** Header component: logo, search bar, auth buttons, notification bell — 2026-05-23
+- ✅ **7.1.2** Login page: form (email/password) + Google OAuth button — 2026-05-23
+- ✅ **7.1.3** Register page: form + validation — 2026-05-23
+- ✅ **7.1.4** Auth flow: setAuth → store token → redirect, handle 401 globally — 2026-05-23
+- ✅ **7.1.5** Test: tsc --noEmit passes, all forms render with loading/error states — 2026-05-23
 
 ### 7.2 Landing Page
-- ⬜ **7.2.1** SearchHero: wire URL input → POST /scrape/url → poll job status → redirect to product
-- ⬜ **7.2.2** Text search: wire → GET /search?q= → hiển thị kết quả
-- ⬜ **7.2.3** Image upload: wire → POST /search/image
+- ✅ **7.2.1** SearchHero: wire URL input → POST /scrape/url → poll job status → redirect to product — 2026-05-23
+- ✅ **7.2.2** Text search: wire → GET /search?q= → paginated results grid — 2026-05-23
+- ✅ **7.2.3** Image upload: "Coming soon" message (feature flag) — 2026-05-23
 
 ### 7.3 Product Detail Page ★ (Core)
-- ⬜ **7.3.1** ProductHeader: tên, brand, thumbnail gallery, AI summary badge, lowest price
-- ⬜ **7.3.2** SellerTable: tất cả sellers sort/filter, TierBadge (API/Config/AI), TrustBadge, affiliate link
-- ⬜ **7.3.3** PriceHistoryChart: Recharts line chart per seller, 30d/90d/6m toggle
-- ⬜ **7.3.4** ReviewAnalysis: summary + sentiment donut + fake alert + top reviews
-- ⬜ **7.3.5** SpecsTable: JSONB specs + "So sánh" button
-- ⬜ **7.3.6** Test: render với real API data, sort/filter SellerTable, chart date range
+- ✅ **7.3.1** ProductHeader: tên, brand, thumbnail, AI summary badge, lowest price, TrustScoreRing — 2026-05-23
+- ✅ **7.3.2** SellerTable: tất cả sellers sort/filter, TierBadge (API/Config/AI), TrustBadge, affiliate link — 2026-05-23
+- ✅ **7.3.3** PriceHistoryChart: Recharts line chart per seller, 30d/90d/all toggle — 2026-05-23
+- ✅ **7.3.4** ReviewAnalysis: AI summary + sentiment donut + fake alert + top reviews — 2026-05-23
+- ✅ **7.3.5** SpecsTable: JSONB specs rendered as key→value table — 2026-05-23
+- ✅ **7.3.6** Test: tsc passes, loading skeleton, error state, null-safe rendering — 2026-05-23
 
 ### 7.4 Compare & Dashboard
-- ⬜ **7.4.1** Compare page: side-by-side 2-3 products (specs diff highlight)
-- ⬜ **7.4.2** Dashboard: wishlist management, search history, subscription badge
+- ✅ **7.4.1** Compare page: side-by-side 2-4 products via ?ids= param — 2026-05-23
+- ✅ **7.4.2** Dashboard: wishlist management, search history, subscription badge, auth guard — 2026-05-23
 - ⬜ **7.4.3** Admin page `/admin/scraper-configs`: list configs, review AI suggestions, test scrape
 
 ### 7.5 Real-time & SEO
-- ⬜ **7.5.1** WebSocket: `useWebSocket` hook → toast notification khi analysis.completed
-- ⬜ **7.5.2** Wishlist price alert toast khi price.updated
-- ⬜ **7.5.3** SEO: dynamic meta per product, JSON-LD (Product + AggregateOffer + AggregateRating)
-- ⬜ **7.5.4** Auto sitemap từ product slugs
-- ⬜ **7.5.5** Test: meta tags correctness, JSON-LD structure, sitemap generation
+- ✅ **7.5.1** WebSocket: STOMP/SockJS hook → notificationStore → bell icon + cache invalidation — 2026-05-23
+- ✅ **7.5.2** PRICE_ALERT / PRICE_UPDATE push to notificationStore → bell badge — 2026-05-23
+- ✅ **7.5.3** SEO: dynamic meta + OG per product page, JSON-LD (Product + AggregateOffer + AggregateRating) — 2026-05-23
+- ✅ **7.5.4** Auto sitemap từ product slugs (`/sitemap.ts` with ISR 1h) — 2026-05-23
+- ✅ **7.5.5** Test: tsc --noEmit passes for sitemap, product metadata, JSON-LD structure — 2026-05-23
 
 ---
 

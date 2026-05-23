@@ -5,7 +5,7 @@ import type { Product, SellerListing, ProductSpecs, Review } from '@/types';
 export function useProductDetail(slug: string) {
   return useQuery({
     queryKey: ['product', slug],
-    queryFn: () => apiClient.get<Product>(`/api/v1/products/${slug}`),
+    queryFn: () => apiClient.get<Product>(`/api/v1/products/slug/${slug}`),
     enabled: !!slug,
     staleTime: 1000 * 60 * 5,
   });

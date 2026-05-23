@@ -129,6 +129,26 @@ export interface ScrapeJob {
   status: ScrapeStatus;
   message?: string;
   url?: string;
+  productSlug?: string;
+}
+
+// ─── Search History ───────────────────────────────────────────────────────────
+
+export interface SearchHistory {
+  id: string;
+  query: string;
+  queryType: QueryType;
+  createdAt: string;
+}
+
+// ─── WebSocket ────────────────────────────────────────────────────────────────
+
+export interface WsNotification {
+  type: 'ANALYSIS_COMPLETE' | 'PRICE_ALERT' | 'PRICE_UPDATE';
+  productId: string;
+  message: string;
+  data: Record<string, unknown>;
+  timestamp: string;
 }
 
 // ─── Wishlist ─────────────────────────────────────────────────────────────────
