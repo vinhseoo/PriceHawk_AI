@@ -41,7 +41,8 @@ class RabbitMQPublisher:
         exchange = await self._channel.declare_exchange(
             exchange_name, aio_pika.ExchangeType.TOPIC, durable=True
         )
-        payload = event.model_dump_json() if isinstance(event, BaseModel) else json.dumps(event)
+        # by_alias=True → camelCase JSON (required for Java consumers)
+        payload = event.model_dump_json(by_alias=True) if isinstance(event, BaseModel) else json.dumps(event)
         message = aio_pika.Message(
             body=payload.encode(),
             content_type="application/json",

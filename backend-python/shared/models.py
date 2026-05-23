@@ -1,9 +1,34 @@
-"""Pydantic event models — must mirror Java DTOs in pricehawk-common exactly."""
-from datetime import datetime
+"""
+Pydantic event models — must mirror Java DTOs in pricehawk-common exactly.
+
+Serialization contract:
+  Java publishes camelCase JSON (Jackson default).
+  Python publishes camelCase JSON (model_dump_json(by_alias=True) via RabbitMQPublisher).
+  All models use alias_generator=to_camel so camelCase keys are accepted on input
+  and produced on output, while internal Python code uses snake_case field names.
+"""
+import uuid
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
-from pydantic import BaseModel, Field
 
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic.alias_generators import to_camel
+
+
+def _now_utc() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+class _Base(BaseModel):
+    """Base for all shared models — camelCase JSON in, camelCase JSON out."""
+    model_config = ConfigDict(
+        alias_generator=to_camel,
+        populate_by_name=True,   # also accept snake_case field names in Python code
+    )
+
+
+# ─── Enums ────────────────────────────────────────────────────────────────────
 
 class ScraperTier(str, Enum):
     API_BASED = "API_BASED"
@@ -26,14 +51,14 @@ class Platform(str, Enum):
 
 # ─── Scrape Events ────────────────────────────────────────────────────────────
 
-class ScrapedReview(BaseModel):
+class ScrapedReview(_Base):
     reviewer_name: str | None = None
     rating: int | None = None
     content: str | None = None
     review_date: str | None = None
 
 
-class ScrapedSellerListing(BaseModel):
+class ScrapedSellerListing(_Base):
     seller_name: str
     seller_id: str | None = None
     seller_url: str | None = None
@@ -49,7 +74,7 @@ class ScrapedSellerListing(BaseModel):
     reviews: list[ScrapedReview] = Field(default_factory=list)
 
 
-class ScrapedProductData(BaseModel):
+class ScrapedProductData(_Base):
     name: str
     brand: str | None = None
     description: str | None = None
@@ -58,7 +83,7 @@ class ScrapedProductData(BaseModel):
     specs: dict[str, Any] = Field(default_factory=dict)
 
 
-class ScrapeResultEvent(BaseModel):
+class ScrapeResultEvent(_Base):
     job_id: str
     domain: str
     platform: str = "OTHER"
@@ -66,26 +91,35 @@ class ScrapeResultEvent(BaseModel):
     scraper_tier: ScraperTier
     product_data: ScrapedProductData
     seller_listings: list[ScrapedSellerListing] = Field(default_factory=list)
-    scraped_at: datetime = Field(default_factory=datetime.utcnow)
+    scraped_at: datetime = Field(default_factory=_now_utc)
 
 
-class ScrapeRequestEvent(BaseModel):
+class ScrapeRequestEvent(_Base):
+    # Java publishes: {jobId, url, userId, requestedAt}
     job_id: str
     url: str
-    requested_by: str | None = None
-    discover_sellers: bool = False
+    user_id: str | None = None       # Java: userId (nullable)
+    discover_sellers: bool = False   # Python-internal; not sent by Java (defaults False)
 
 
 # ─── Analysis Events ──────────────────────────────────────────────────────────
 
-class AnalysisRequestEvent(BaseModel):
-    job_id: str
+class AnalysisRequestEvent(_Base):
+    # Java publishes: {productId, sellerListingId, reviewCount, requestedAt}
+    # job_id is optional because Java doesn't include it; generated if absent
+    job_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     product_id: str
     seller_listing_id: str
-    reviews: list[ScrapedReview] = Field(default_factory=list)
+    review_count: int = 0            # Java: reviewCount
+    reviews: list[ScrapedReview] = Field(default_factory=list)  # Python-to-Python only
+    # Optional context for trust score (not sent by Java)
+    avg_rating: float | None = None
+    is_official_store: bool = False
+    current_price: float | None = None
 
 
-class AnalysisResultEvent(BaseModel):
+class AnalysisResultEvent(_Base):
+    # Python publishes → Java consumes
     job_id: str
     product_id: str
     seller_listing_id: str
@@ -97,10 +131,10 @@ class AnalysisResultEvent(BaseModel):
     top_pros: list[str] = Field(default_factory=list)
     top_cons: list[str] = Field(default_factory=list)
     recommendation: str | None = None
-    analyzed_at: datetime = Field(default_factory=datetime.utcnow)
+    analyzed_at: datetime = Field(default_factory=_now_utc)
 
 
-# ─── Scraper Config ───────────────────────────────────────────────────────────
+# ─── Scraper Config (Python-internal only, no Java interop) ───────────────────
 
 class ScraperConfigStatus(str, Enum):
     ACTIVE = "ACTIVE"

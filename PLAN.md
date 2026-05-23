@@ -137,25 +137,26 @@
 > Mục tiêu: Biến raw data thành insights — fake detection, sentiment, trust score.
 
 ### 5.1 Infrastructure
-- ⬜ **5.1.1** RabbitMQ consumer `analysis.request.queue` → dispatch tới analyzers
-- ⬜ **5.1.2** Publish `analysis.completed` sau khi xong
-- ⬜ **5.1.3** Test: consumer, publish, semantic cache hit/miss
+- ✅ **5.1.1** `AnalysisRequestConsumer` cho `analysis.request.queue` — parse Java camelCase payload → dispatch — 2026-05-23
+- ✅ **5.1.2** Publish `analysis.completed` với `AnalysisResultEvent` (camelCase JSON for Java) — 2026-05-23
+- ✅ **5.1.3** Test: consumer parse camelCase, publish result, invalid payload handled (4 cases) — 2026-05-23
+- ✅ **5.1.4** Fix Java↔Python JSON contract: camelCase aliases on all shared event models + `by_alias=True` publish — 2026-05-23
 
 ### 5.2 Review Analysis Pipeline
-- ⬜ **5.2.1** `FakeReviewDetector` — rule-based (SHORT_5STAR, DUPLICATE, EMPTY) + LLM-assisted cho borderline cases
-- ⬜ **5.2.2** Sentiment analysis: POSITIVE/NEGATIVE/NEUTRAL per review
-- ⬜ **5.2.3** `ReviewSummarizer` — top 3 pros/cons + recommendation (Vietnamese)
-- ⬜ **5.2.4** Test: fake detection accuracy trên sample data, summarizer output quality
+- ✅ **5.2.1** `FakeReviewDetector` — rule-based: SHORT_5STAR, EMPTY_5STAR, DUPLICATE_CONTENT (7 test cases) — 2026-05-23
+- ✅ **5.2.2** `SentimentAnalyzer` — Vietnamese/English keyword matching, 0.0–1.0 score (9 test cases) — 2026-05-23
+- ✅ **5.2.3** `ReviewSummarizer` — LLM top_pros/cons + recommendation in Vietnamese — 2026-05-23
+- ✅ **5.2.4** `AnalysisService` — orchestrates full pipeline, LLM graceful fallback (8 test cases) — 2026-05-23
 
 ### 5.3 Trust Score & Embeddings
-- ⬜ **5.3.1** `TrustScoreCalculator` — wire vào real data (rating, fake_ratio, review_count, official_store)
-- ⬜ **5.3.2** `EmbeddingGenerator` — text embedding qua OpenAI `text-embedding-3-small`
-- ⬜ **5.3.3** Test: trust score range (0-1), embedding dimensions (1536), cache behavior
+- ✅ **5.3.1** `TrustScoreCalculator` — wired: avg_rating, fake_ratio, review_count, is_official, price (6 test cases) — 2026-05-23
+- ✅ **5.3.2** `EmbeddingGenerator` — OpenAI text-embedding-3-small, Redis 24h cache, graceful fallback — 2026-05-23
+- ✅ **5.3.3** `POST /api/v1/analysis/embeddings` endpoint wired with EmbeddingGenerator — 2026-05-23
 
 ### 5.4 Product Matching
-- ⬜ **5.4.1** `ProductMatcher` — TF-IDF name similarity + specs key matching
-- ⬜ **5.4.2** Cross-source deduplication: tránh tạo duplicate Product records
-- ⬜ **5.4.3** Test: same product từ Shopee + TGDĐ → match về 1 product_id
+- ✅ **5.4.1** `ProductMatcher` — Jaccard token similarity with noise filtering + brand normalization — 2026-05-23
+- ✅ **5.4.2** `POST /api/v1/analysis/match` endpoint for cross-source deduplication — 2026-05-23
+- ✅ **5.4.3** Test: exact match, no match below threshold, empty candidates, same product detection (7 cases) — 2026-05-23
 
 ---
 
