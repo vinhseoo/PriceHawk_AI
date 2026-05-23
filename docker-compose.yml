@@ -1,37 +1,14 @@
 version: '3.8'
 
+# ─────────────────────────────────────────────────────────────────────────────
+# PriceHawk AI — Docker Compose (local dev)
+#
+# Only RabbitMQ is managed here.
+# PostgreSQL  → use local install (postgres / 12345678)
+# Redis       → reuse redis_matching already running on 6379
+# ─────────────────────────────────────────────────────────────────────────────
+
 services:
-  postgres:
-    image: pgvector/pgvector:pg16
-    container_name: pricehawk-postgres
-    environment:
-      POSTGRES_USER: pricehawk
-      POSTGRES_PASSWORD: pricehawk_secret
-      POSTGRES_DB: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init-databases.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pricehawk"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
-    container_name: pricehawk-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
     container_name: pricehawk-rabbitmq
@@ -50,6 +27,4 @@ services:
       retries: 5
 
 volumes:
-  postgres_data:
-  redis_data:
   rabbitmq_data:

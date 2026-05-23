@@ -6,8 +6,8 @@ class Settings(BaseSettings):
     # PostgreSQL
     POSTGRES_HOST: str = "localhost"
     POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str = "pricehawk"
-    POSTGRES_PASSWORD: str = "pricehawk_secret"
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "12345678"
 
     # Redis
     REDIS_HOST: str = "localhost"

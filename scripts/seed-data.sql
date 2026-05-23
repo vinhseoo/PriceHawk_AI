@@ -1,13 +1,19 @@
 -- =============================================================================
 -- PriceHawk AI — Seed Data (Dev / Demo)
--- Run against: user_db  AND  catalog_db
--- Usage: psql -U pricehawk -h localhost -f seed-data.sql
+--
+-- Usage: psql -U postgres -h localhost -f scripts\seed-data.sql
+--
+-- Databases:
+--   user-service  → 'postgres' DB, schema 'pricehawk'
+--   catalog       → 'catalog_db'  DB, schema 'public'
+--   (scraper_db seeded by Alembic + Python service itself)
 -- =============================================================================
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- user_db
+-- postgres DB / pricehawk schema  (user-service tables)
 -- ─────────────────────────────────────────────────────────────────────────────
-\c user_db
+\c postgres
+SET search_path TO pricehawk;
 
 -- Test accounts (password = "Test123456" — bcrypt hash)
 -- user: test@pricehawk.vn   / Test123456

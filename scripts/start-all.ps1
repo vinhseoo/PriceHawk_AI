@@ -3,10 +3,15 @@
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\start-all.ps1
 #
 # Prerequisites:
-#   - Docker Desktop running
+#   - Docker Desktop running        (for RabbitMQ only)
+#   - Local PostgreSQL on 5432      (user: postgres / 12345678)
+#   - redis_matching container      (already running on 6379)
 #   - Java 21 + Maven 3.9+
 #   - Python 3.11+ + pip
 #   - Node.js 18+ + npm
+#
+# First-time setup:
+#   psql -U postgres -h localhost -f scripts\setup-local-db.sql
 # =============================================================================
 
 param(
@@ -37,17 +42,28 @@ function Start-ServiceWindow([string]$name, [string]$workdir, [string]$command) 
     Start-Sleep -Milliseconds 500
 }
 
-# ─── 1. Docker infrastructure ─────────────────────────────────────────────────
-Write-Step "Starting Docker infrastructure (Postgres, Redis, RabbitMQ)..."
+# ─── 1. Docker infrastructure (RabbitMQ only) ────────────────────────────────
+Write-Step "Starting RabbitMQ via Docker..."
 Set-Location $ROOT
-docker-compose up -d
+docker-compose up -d rabbitmq
 if ($LASTEXITCODE -ne 0) { Write-Warn "docker-compose warning (may already be running)" }
 
-Write-Host "  Waiting 10s for Postgres to initialise..." -ForegroundColor Gray
-Start-Sleep -Seconds 10
-Write-OK "Infrastructure ready"
+Write-Host "  Waiting 8s for RabbitMQ to initialise..." -ForegroundColor Gray
+Start-Sleep -Seconds 8
+Write-OK "RabbitMQ ready (Management UI: http://localhost:15672)"
 
-# ─── 2. Build Java services ───────────────────────────────────────────────────
+# ─── 2. Check local PostgreSQL ────────────────────────────────────────────────
+Write-Step "Checking local PostgreSQL..."
+$env:PGPASSWORD = "12345678"
+$pgCheck = psql -U postgres -h localhost -c "SELECT 1" -t 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Warn "Cannot connect to local PostgreSQL. Make sure it is running on port 5432."
+    Write-Warn "Run first: psql -U postgres -h localhost -f scripts\setup-local-db.sql"
+    exit 1
+}
+Write-OK "PostgreSQL reachable"
+
+# ─── 3. Build Java services ───────────────────────────────────────────────────
 if (-not $SkipBuild -and -not $FrontendOnly) {
     Write-Step "Building Java backend (this takes ~2 min)..."
     Set-Location "$ROOT\backend-java"
@@ -56,25 +72,21 @@ if (-not $SkipBuild -and -not $FrontendOnly) {
     Write-OK "Maven build successful"
 }
 
-# ─── 3. Install Python dependencies ──────────────────────────────────────────
+# ─── 4. Install Python dependencies ──────────────────────────────────────────
 if (-not $FrontendOnly) {
     Write-Step "Installing Python dependencies..."
     Set-Location "$ROOT\backend-python"
-
-    # Shared
     pip install -r shared/requirements.txt -q 2>&1 | Out-Null
-    # Scraper
     pip install -r scraper-service/requirements.txt -q 2>&1 | Out-Null
-    # AI service
     pip install -r ai-service/requirements.txt -q 2>&1 | Out-Null
     Write-OK "Python packages installed"
 }
 
-# ─── 4. Seed data ──────────────────────────────────────────────────────────────
+# ─── 5. Seed data ──────────────────────────────────────────────────────────────
 if (-not $SkipSeed -and -not $FrontendOnly) {
     Write-Step "Inserting seed data..."
-    $env:PGPASSWORD = "pricehawk_secret"
-    psql -U pricehawk -h localhost -f "$ROOT\scripts\seed-data.sql" 2>&1
+    $env:PGPASSWORD = "12345678"
+    psql -U postgres -h localhost -f "$ROOT\scripts\seed-data.sql" 2>&1
     if ($LASTEXITCODE -ne 0) {
         Write-Warn "Seed data may have partially failed (likely already seeded — OK to ignore)"
     } else {
@@ -83,13 +95,13 @@ if (-not $SkipSeed -and -not $FrontendOnly) {
     Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
 }
 
-# ─── 5. Start Java services (each in its own window) ─────────────────────────
+# ─── 6. Start Java services (each in its own window) ─────────────────────────
 if (-not $FrontendOnly) {
     Write-Step "Starting Java microservices..."
 
     $javaDir = "$ROOT\backend-java"
 
-    Start-ServiceWindow "Gateway (8080)" $javaDir `
+    Start-ServiceWindow "Gateway (8090)" $javaDir `
         "mvn spring-boot:run -pl pricehawk-gateway -am -DskipTests"
 
     Start-Sleep -Seconds 3
@@ -107,15 +119,12 @@ if (-not $FrontendOnly) {
     Start-Sleep -Seconds 20
 }
 
-# ─── 6. Start Python services ─────────────────────────────────────────────────
+# ─── 7. Start Python services ─────────────────────────────────────────────────
 if (-not $FrontendOnly) {
     Write-Step "Starting Python microservices..."
 
     $scrPath = "$ROOT\backend-python\scraper-service"
     $aiPath  = "$ROOT\backend-python\ai-service"
-
-    # Set PYTHONPATH so `shared` package is importable
-    $pyEnv = "PYTHONPATH='$ROOT\backend-python'; "
 
     Start-ServiceWindow "Scraper Service (8083)" $scrPath `
         "Set-Item Env:\PYTHONPATH '$ROOT\backend-python'; uvicorn app.main:app --host 0.0.0.0 --port 8083 --reload"
@@ -124,7 +133,7 @@ if (-not $FrontendOnly) {
         "Set-Item Env:\PYTHONPATH '$ROOT\backend-python'; uvicorn app.main:app --host 0.0.0.0 --port 8084 --reload"
 }
 
-# ─── 7. Start frontend dev server ─────────────────────────────────────────────
+# ─── 8. Start frontend dev server ─────────────────────────────────────────────
 Write-Step "Starting Next.js frontend (http://localhost:3000)..."
 Start-ServiceWindow "Frontend (3000)" "$ROOT\frontend" "npm run dev"
 
@@ -135,7 +144,7 @@ Write-Host "  PriceHawk AI — All services starting up!" -ForegroundColor Magen
 Write-Host "============================================================" -ForegroundColor Magenta
 Write-Host ""
 Write-Host "  Frontend:       http://localhost:3000" -ForegroundColor White
-Write-Host "  API Gateway:    http://localhost:8080" -ForegroundColor White
+Write-Host "  API Gateway:    http://localhost:8090" -ForegroundColor White
 Write-Host "  RabbitMQ UI:    http://localhost:15672  (pricehawk / pricehawk_secret)" -ForegroundColor White
 Write-Host ""
 Write-Host "  Test accounts:" -ForegroundColor White
