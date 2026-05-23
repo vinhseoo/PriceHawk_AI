@@ -75,6 +75,59 @@ Tier 3 (AI Generic): Playwright + LLM — any unknown website, auto-generates Ti
 
 The `ScraperOrchestrator` in `backend-python/scraper-service/app/core/orchestrator.py` routes Tier 1→2→3.
 
+## Production-Grade Standards — KHÔNG ĐƯỢC HẠ THẤP
+
+> PriceHawk được xây dựng để chạy production thực tế. Mọi dòng code phải đạt chuẩn của các hệ thống lớn đang hoạt động, **không phải demo, không phải bài tập sinh viên.**
+
+### Security — Không khoan nhượng
+
+- **Authentication**: Luôn extract userId từ JWT đã verify (`@AuthenticationPrincipal`). **Tuyệt đối không trust plain header do client gửi** (ví dụ `X-User-Id`) trừ khi header đó được inject bởi API Gateway sau khi đã validate JWT.
+- **Authorization**: Mọi endpoint cần auth phải kiểm tra ownership — user A không thể đọc/sửa data của user B dù có token hợp lệ.
+- **Input validation**: Validate tất cả input tại boundary (controller/route), reject sớm trước khi vào service. Không trust bất kỳ dữ liệu nào từ client.
+- **SQL injection**: Dùng parameterized queries / JPA / SQLAlchemy — không bao giờ nối chuỗi SQL thủ công.
+- **Secrets**: Không hardcode secret/key trong code. Luôn đọc từ env var với default chỉ cho local dev.
+- **Sensitive data**: Không log password, token, PII. Response không trả về `passwordHash` hay internal fields.
+- **External calls**: Luôn set timeout. Validate response trước khi tin dùng (xem `OAuth2Service` — verify Google token trước khi tạo user).
+
+### API Design
+
+- **Idempotency**: POST tạo resource phải kiểm tra duplicate trước khi insert (không để double-insert).
+- **HTTP status codes đúng**: 201 Created cho POST tạo mới, 204 No Content cho DELETE, 409 Conflict cho duplicate, 422 cho validation error business logic.
+- **Pagination**: Mọi list endpoint phải hỗ trợ phân trang (`page`, `size`). Không bao giờ trả về unbounded list.
+- **Versioning**: Tất cả API endpoints đi qua `/api/v1/`. Khi breaking change: tạo `/api/v2/`, không xóa `/api/v1/`.
+- **Error response nhất quán**: Luôn wrap trong `ApiResponse` với `success`, `message`, `errorCode`. Client phải biết lỗi gì xảy ra.
+
+### Data Layer
+
+- **DB migrations**: Chỉ thay đổi schema qua Flyway (Java) hoặc Alembic (Python). **Không bao giờ chạy ALTER TABLE thủ công trên bất kỳ môi trường nào.**
+- **Transactions**: Business logic liên quan đến nhiều bảng phải trong cùng 1 transaction (`@Transactional`). Partial update là bug.
+- **N+1 queries**: Không để vòng lặp gọi DB. Dùng `JOIN FETCH`, batch query, hoặc đổi fetch strategy.
+- **Index**: Mọi cột được dùng trong WHERE/ORDER BY phải có index trong migration.
+- **Constraints**: Enforce data integrity tại DB level (NOT NULL, UNIQUE, FK) — không chỉ ở application level.
+
+### Resilience
+
+- **Timeout**: Mọi HTTP call ra ngoài (external API, inter-service) phải có connect timeout + read timeout.
+- **Retry**: External calls có thể fail tạm thời — implement retry với exponential backoff cho critical paths.
+- **Graceful degradation**: Nếu service phụ (AI, scraper) chậm/lỗi, core flow phải vẫn hoạt động được.
+- **Không để exception trần**: Mọi exception đều phải được catch ở đúng layer, log đủ context, và trả về response có nghĩa.
+
+### Observability
+
+- **Structured logging**: Log đủ context — userId, requestId, action, duration. Không log chỉ `"Error occurred"`.
+- **Log levels đúng**: DEBUG cho flow trace, INFO cho business event quan trọng, WARN cho recoverable error, ERROR cho unrecoverable.
+- **Health checks**: Mọi service phải expose `/actuator/health` (Java) hoặc `/health` (Python) kiểm tra DB + dependencies.
+- **Correlation ID**: Mọi request phải được track bằng 1 ID xuyên suốt các service.
+
+### Code Quality
+
+- **Không để dead code**: Xóa hẳn code không dùng, không comment out rồi để đó.
+- **Không để magic number/string**: Đưa vào constant hoặc config.
+- **Fail fast**: Validate điều kiện tiên quyết ngay đầu method — không để logic sai chạy sâu vào rồi mới lỗi.
+- **Method size**: Nếu 1 method > 30 dòng, xem xét tách ra — mỗi method làm đúng 1 việc.
+
+---
+
 ## Global Coding Rules
 
 - All HTTP responses wrap in `ApiResponse<T>` (Java) or equivalent Pydantic schema (Python).

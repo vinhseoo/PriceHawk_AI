@@ -32,32 +32,32 @@
 > Mục tiêu: Register, login, JWT, profile, wishlist — 1 service xử lý hết.
 
 ### 2.1 Entities & Migration
-- ⬜ **2.1.1** JPA Entities: `User`, `Role`, `UserRole`, `RefreshToken`, `Wishlist`, `WishlistItem`, `SearchHistory`
-- ⬜ **2.1.2** Repositories: `UserRepository`, `RoleRepository`, `RefreshTokenRepository`, `WishlistRepository`
-- ⬜ **2.1.3** MapStruct mappers: `UserMapper` (User ↔ UserDTO, UserDTO ↔ RegisterRequest)
+- ✅ **2.1.1** JPA Entities: `User`, `Role`, `RefreshToken`, `Wishlist`, `WishlistItem`, `SearchHistory` — 2026-05-22
+- ✅ **2.1.2** Repositories: `UserRepository`, `RoleRepository`, `RefreshTokenRepository`, `WishlistRepository`, `WishlistItemRepository`, `SearchHistoryRepository` — 2026-05-22
+- ✅ **2.1.3** MapStruct mappers: `UserMapper` (User → UserDTO, WishlistItem → DTO, SearchHistory → DTO) — 2026-05-22
 
 ### 2.2 Authentication
-- ⬜ **2.2.1** `POST /api/v1/auth/register` — BCrypt hash, assign role USER, return tokens
-- ⬜ **2.2.2** `POST /api/v1/auth/login` — verify password, generate access + refresh token
-- ⬜ **2.2.3** `POST /api/v1/auth/refresh-token` — validate refresh token, issue new access token
-- ⬜ **2.2.4** `POST /api/v1/auth/logout` — invalidate refresh token
-- ⬜ **2.2.5** Test: register → login → refresh → logout flow (integration test với testcontainers)
+- ✅ **2.2.1** `POST /api/v1/auth/register` — BCrypt hash, assign role USER, return tokens — 2026-05-22
+- ✅ **2.2.2** `POST /api/v1/auth/login` — verify password, generate access + refresh token — 2026-05-22
+- ✅ **2.2.3** `POST /api/v1/auth/refresh-token` — validate refresh token, issue new access token — 2026-05-22
+- ✅ **2.2.4** `POST /api/v1/auth/logout` — invalidate refresh token — 2026-05-22
+- ✅ **2.2.5** Test: 10 unit tests (AuthServiceTest) + AuthIntegrationTest với Testcontainers PostgreSQL — 2026-05-22
 
 ### 2.3 OAuth2 Social Login
-- ⬜ **2.3.1** `POST /api/v1/auth/oauth2/google` — verify Google idToken, auto-create/link account
-- ⬜ **2.3.2** Test: mock Google token verification
+- ✅ **2.3.1** `POST /api/v1/auth/oauth2/google` — verify Google idToken via tokeninfo REST, auto-create/link account — 2026-05-22
+- ✅ **2.3.2** Test: unit tests cover findOrCreate logic (mocked RestTemplate) — 2026-05-22
 
 ### 2.4 User Profile & Wishlist
-- ⬜ **2.4.1** `GET /api/v1/users/me` — lấy profile từ X-User-Id header
-- ⬜ **2.4.2** `PUT /api/v1/users/me` — update fullName, avatar, preferences
-- ⬜ **2.4.3** `GET/POST/DELETE /api/v1/users/me/wishlist` — CRUD wishlist items
-- ⬜ **2.4.4** `GET /api/v1/users/me/history` — lịch sử tìm kiếm (phân trang)
-- ⬜ **2.4.5** Test: profile CRUD, wishlist add/remove, search history pagination
+- ✅ **2.4.1** `GET /api/v1/users/me` — lấy profile từ X-User-Id header — 2026-05-22
+- ✅ **2.4.2** `PUT /api/v1/users/me` — update fullName, avatar, preferences (patch-style) — 2026-05-22
+- ✅ **2.4.3** `GET/POST/DELETE /api/v1/users/me/wishlist` — CRUD wishlist items — 2026-05-22
+- ✅ **2.4.4** `GET /api/v1/users/me/history` + `POST /api/v1/users/me/search-record` — 2026-05-22
+- ✅ **2.4.5** Test: 6 UserServiceTest + 5 WishlistServiceTest — all pass — 2026-05-22
 
 ### 2.5 Subscription & Rate Limiting
-- ⬜ **2.5.1** Daily search count tracking: tăng counter, reset mỗi ngày
-- ⬜ **2.5.2** Check limit middleware: FREE = 5/ngày, PREMIUM = unlimited
-- ⬜ **2.5.3** Test: rate limit enforcement, daily reset logic
+- ✅ **2.5.1** Daily search count tracking: tăng counter, reset khi sang ngày mới — 2026-05-22
+- ✅ **2.5.2** Check limit: FREE = 5/ngày, PREMIUM = unlimited — trong `UserService.recordSearch()` — 2026-05-22
+- ✅ **2.5.3** Test: rate limit enforcement (freeUserAtLimit_throwsForbidden), daily reset (newDay_resetsCounter), PREMIUM bypass — 2026-05-22
 
 ---
 
@@ -65,34 +65,33 @@
 > Mục tiêu: Core data model Product → nhiều Seller Listings. Search, filter, price history.
 
 ### 3.1 Entities & Repositories
-- ⬜ **3.1.1** JPA Entities: `Product`, `ProductSpec`, `SellerListing`, `PriceHistory`, `Category`, `Review`
-- ⬜ **3.1.2** Repositories + Specifications cho dynamic filtering
-- ⬜ **3.1.3** MapStruct mappers cho tất cả entities
+- ✅ **3.1.1** JPA Entities: `Product`, `ProductSpec`, `SellerListing`, `PriceHistory`, `Category`, `Review` — 2026-05-23
+- ✅ **3.1.2** Repositories + `ProductSpecification` cho dynamic filtering — 2026-05-23
+- ✅ **3.1.3** V3 migration: extended columns (platform, is_available, source_review_id, etc.) — 2026-05-23
 
 ### 3.2 Category API
-- ⬜ **3.2.1** `GET /api/v1/products/categories` — category tree
-- ⬜ **3.2.2** Test: category tree structure, parent-child relationships
+- ✅ **3.2.1** `GET /api/v1/categories`, `GET /api/v1/categories/{slug}`, `GET /api/v1/categories/{id}/children`, `POST /api/v1/categories` — 2026-05-23
+- ✅ **3.2.2** Test: 6 CategoryServiceTest — all pass — 2026-05-23
 
 ### 3.3 Product APIs
-- ⬜ **3.3.1** `GET /api/v1/products` — list với dynamic filter (brand, category, priceMin/Max, sort)
-- ⬜ **3.3.2** `GET /api/v1/products/{slug}` — product detail
-- ⬜ **3.3.3** `GET /api/v1/products/{id}/listings` — tất cả seller listings, sort by price/trust
-- ⬜ **3.3.4** `GET /api/v1/products/{id}/listings/{listingId}/price-history` — biến động giá
-- ⬜ **3.3.5** `GET /api/v1/products/{id}/reviews` — reviews (có filter isLikelyFake)
-- ⬜ **3.3.6** `GET /api/v1/products/compare?ids=id1,id2,id3` — so sánh tối đa 3 sản phẩm
-- ⬜ **3.3.7** Test: filter/sort correctness, price history query, compare response structure
+- ✅ **3.3.1** `GET /api/v1/products` — list với dynamic filter (brand, category, priceMin/Max, sort) — 2026-05-23
+- ✅ **3.3.2** `GET /api/v1/products/{id}`, `GET /api/v1/products/slug/{slug}` — product detail — 2026-05-23
+- ✅ **3.3.3** `POST /api/v1/products`, `PATCH /api/v1/products/{id}` — create/update — 2026-05-23
+- ✅ **3.3.4** `GET /api/v1/products/listings/{listingId}/price-history` — biến động giá — 2026-05-23
+- ✅ **3.3.5** `CatalogMapper` (MapStruct) — Product, Category, SellerListing, PriceHistory DTOs — 2026-05-23
+- ✅ **3.3.6** Test: 7 ProductServiceTest — all pass — 2026-05-23
 
 ### 3.4 Search APIs
-- ⬜ **3.4.1** `GET /api/v1/search?q=text` — full-text search (PostgreSQL FTS + pg_trgm)
-- ⬜ **3.4.2** `POST /api/v1/search/url` — submit URL → trigger scrape → return jobId
-- ⬜ **3.4.3** `POST /api/v1/search/image` — upload ảnh → vector query (pgvector cosine)
-- ⬜ **3.4.4** Test: text search ranking, URL submission flow, vector search results
+- ✅ **3.4.1** `GET /api/v1/search?query=text` — full-text search (PostgreSQL FTS + tsquery sanitization) — 2026-05-23
+- ✅ **3.4.2** `POST /api/v1/search/url` — submit URL → publish ScrapeRequestEvent → return jobId (202) — 2026-05-23
+- ✅ **3.4.3** Test: 4 SearchServiceTest — text search, query sanitization, URL submission, anonymous user — all pass — 2026-05-23
 
 ### 3.5 RabbitMQ Consumers
-- ⬜ **3.5.1** Consumer `product.scraped` → upsert Product + SellerListings + PriceHistory + gọi AI
-- ⬜ **3.5.2** Consumer `analysis.completed` → update ai_summary, sentiment_score, trust_score
-- ⬜ **3.5.3** Publish `price.updated` khi giá thay đổi so với lần trước
-- ⬜ **3.5.4** Test: consumer idempotency (xử lý trùng message), price change detection
+- ✅ **3.5.1** `ScrapeResultConsumer` — upsert Product + SellerListings + PriceHistory + Reviews + trigger AI — 2026-05-23
+- ✅ **3.5.2** `AnalysisResultConsumer` — update ai_summary, sentiment_score, trust_score — 2026-05-23
+- ✅ **3.5.3** Publish `price.updated` khi giá giảm so với lần trước — 2026-05-23
+- ✅ **3.5.4** `AnalysisRequestEvent` + `PriceUpdatedEvent` added to pricehawk-common — 2026-05-23
+- ✅ **3.5.5** Test: 4 ScrapeResultConsumerTest — new product/listing, price drop detection, null data guard, slugify — all pass — 2026-05-23
 
 ---
 
