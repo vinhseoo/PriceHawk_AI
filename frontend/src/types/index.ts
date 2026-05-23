@@ -136,8 +136,9 @@ export interface ScrapeJob {
 
 export interface SearchHistory {
   id: string;
-  query: string;
+  queryValue: string;
   queryType: QueryType;
+  resultCount: number | null;
   createdAt: string;
 }
 
