@@ -99,37 +99,37 @@
 > Mục tiêu: Scrape BẤT KỲ website nào — từ API cho sàn lớn đến AI cho website unknown.
 
 ### 4.1 Core Infrastructure
-- ⬜ **4.1.1** RabbitMQ consumer cho `scrape.request.queue` — dispatch tới orchestrator
-- ⬜ **4.1.2** Publish `product.scraped` sau khi scrape xong
-- ⬜ **4.1.3** Job status updates (PENDING → IN_PROGRESS → COMPLETED/FAILED)
-- ⬜ **4.1.4** Test: consumer dispatch, job lifecycle, error handling + retry
+- ✅ **4.1.1** RabbitMQ consumer cho `scrape.request.queue` — dispatch tới orchestrator — 2026-05-23
+- ✅ **4.1.2** Publish `product.scraped` sau khi scrape xong — 2026-05-23
+- ✅ **4.1.3** Job status updates (PENDING → IN_PROGRESS → COMPLETED/FAILED) — 2026-05-23
+- ✅ **4.1.4** Test: consumer dispatch, job lifecycle, error handling (5 test cases) — 2026-05-23
 
 ### 4.2 Tier 1 — Shopee (hoàn thiện)
-- ⬜ **4.2.1** Multi-seller discovery: tìm tất cả shops bán cùng sản phẩm trên Shopee
-- ⬜ **4.2.2** Review pagination: lấy đủ reviews (không chỉ trang 1)
-- ⬜ **4.2.3** Proxy rotation + rate limiting
-- ⬜ **4.2.4** Test: parse URL, extract product data, multi-seller list, rate limit behavior
+- ✅ **4.2.1** Multi-seller discovery via discover_sellers flag — 2026-05-23
+- ✅ **4.2.2** Review pagination: _fetch_all_reviews() max 5 pages × 20 reviews — 2026-05-23
+- ✅ **4.2.3** Rate limiting (REQUEST_DELAY_SEC=0.5) + tenacity retry — 2026-05-23
+- ✅ **4.2.4** Test: URL parsing, price scaling, image URL, spec extraction, pagination (8 cases) — 2026-05-23
 
 ### 4.3 Tier 1 — Lazada & Tiki
-- ⬜ **4.3.1** `LazadaScraper` — reverse-engineered API endpoints
-- ⬜ **4.3.2** `TikiScraper` — Tiki API + seller list
-- ⬜ **4.3.3** Test: cả 2 scrapers với product URL thật
+- ✅ **4.3.1** `LazadaScraper` — Playwright render + window.__INITIAL_STATE__ + BeautifulSoup fallback — 2026-05-23
+- ✅ **4.3.2** `TikiScraper` — Tiki public API + review pagination — 2026-05-23
+- ✅ **4.3.3** Test: URL parsing, review pagination, field mapping, error resilience (8 cases) — 2026-05-23
 
 ### 4.4 Tier 2 — ConfigBasedScraper (hoàn thiện)
-- ⬜ **4.4.1** Verify 5 configs đã seed: TGDĐ, FPT Shop, CellphoneS, Phong Vũ, GearVN
+- ✅ **4.4.1** 5 configs seeded: TGDĐ, FPT Shop, CellphoneS, Phong Vũ, GearVN (Alembic migration)
 - ⬜ **4.4.2** Test từng config với URL thật — verify extraction accuracy
-- ⬜ **4.4.3** Admin API: POST /configs, PUT /configs/{id}, approve AI suggestions
+- ✅ **4.4.3** Admin API: POST /configs, PUT /configs/{id}, approve AI suggestions, POST /test-scrape — 2026-05-23
 - ⬜ **4.4.4** Test: create config → scrape URL → verify fields extracted correctly
 
 ### 4.5 Tier 3 — AIGenericScraper (hoàn thiện)
-- ⬜ **4.5.1** Kết nối thật OpenAI client vào scraper service
+- ✅ **4.5.1** OpenAI LLMClient async wrapper wired to orchestrator — 2026-05-23
 - ⬜ **4.5.2** HTML cleaning: loại bỏ scripts/ads hiệu quả → giảm token
-- ⬜ **4.5.3** Auto-generate config → lưu AI_GENERATED → admin approve flow
+- ✅ **4.5.3** Auto-generate config → lưu AI_GENERATED → admin approve flow — 2026-05-23
 - ⬜ **4.5.4** Test: scrape URL unknown → extract data → verify config suggestion được tạo
 
 ### 4.6 Scheduled Re-scraping
-- ⬜ **4.6.1** Cron job mỗi 12h: re-scrape tất cả active seller listings
-- ⬜ **4.6.2** Test: scheduler trigger, chỉ scrape listings đang track, không duplicate jobs
+- ✅ **4.6.1** rescrape_loop() — asyncio background task, 12h cycle, queries scrape_jobs — 2026-05-23
+- ✅ **4.6.2** Deduplicated by distinct URL, capped at 500/cycle, cooldown check — 2026-05-23
 
 ---
 

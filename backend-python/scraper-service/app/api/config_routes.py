@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
@@ -42,3 +44,27 @@ async def approve_config(config_id: str, config_service: ConfigService = Depends
 @router.put("/{config_id}")
 async def update_config(config_id: str, request: CreateConfigRequest, config_service: ConfigService = Depends(get_config_service)):
     return await config_service.update(config_id, request)
+
+
+class TestScrapeRequest(BaseModel):
+    url: str
+
+
+@router.post("/test-scrape")
+async def test_scrape(request: TestScrapeRequest, config_service: ConfigService = Depends(get_config_service)):
+    """
+    Admin endpoint: test-run the full scraper pipeline for a URL without persisting results.
+    Returns the raw ScrapeResultEvent for inspection.
+    """
+    from app.core.orchestrator import ScraperOrchestrator
+    orchestrator = ScraperOrchestrator(config_service)
+
+    try:
+        result = await orchestrator.scrape(
+            url=request.url,
+            job_id=str(uuid.uuid4()),
+            discover_sellers=False,
+        )
+        return result.model_dump()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
