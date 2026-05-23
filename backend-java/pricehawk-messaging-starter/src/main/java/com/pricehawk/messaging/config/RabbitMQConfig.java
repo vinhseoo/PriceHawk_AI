@@ -34,10 +34,12 @@ public class RabbitMQConfig {
     @Bean Queue analysisCompletedQueue() { return QueueBuilder.durable(MessageQueueConstants.ANALYSIS_COMPLETED_QUEUE).build(); }
     @Bean Queue priceUpdatedQueue() { return QueueBuilder.durable(MessageQueueConstants.PRICE_UPDATED_QUEUE).build(); }
     @Bean Queue scrapeFailedQueue() { return QueueBuilder.durable(MessageQueueConstants.SCRAPE_FAILED_QUEUE).build(); }
+    @Bean Queue priceAlertSubQueue() { return QueueBuilder.durable(MessageQueueConstants.PRICE_ALERT_SUB_QUEUE).build(); }
 
     @Bean Binding scrapeRequestBinding() { return BindingBuilder.bind(scrapeRequestQueue()).to(scrapeExchange()).with(MessageQueueConstants.SCRAPE_REQUEST_KEY); }
     @Bean Binding productScrapedBinding() { return BindingBuilder.bind(productScrapedQueue()).to(scrapeExchange()).with(MessageQueueConstants.PRODUCT_SCRAPED_KEY); }
     @Bean Binding analysisRequestBinding() { return BindingBuilder.bind(analysisRequestQueue()).to(analysisExchange()).with(MessageQueueConstants.ANALYSIS_REQUEST_KEY); }
     @Bean Binding analysisCompletedBinding() { return BindingBuilder.bind(analysisCompletedQueue()).to(analysisExchange()).with(MessageQueueConstants.ANALYSIS_COMPLETED_KEY); }
     @Bean Binding priceUpdatedBinding() { return BindingBuilder.bind(priceUpdatedQueue()).to(priceExchange()).with(MessageQueueConstants.PRICE_UPDATED_KEY); }
+    @Bean Binding priceAlertSubBinding() { return BindingBuilder.bind(priceAlertSubQueue()).to(priceExchange()).with(MessageQueueConstants.PRICE_ALERT_SUB_KEY); }
 }

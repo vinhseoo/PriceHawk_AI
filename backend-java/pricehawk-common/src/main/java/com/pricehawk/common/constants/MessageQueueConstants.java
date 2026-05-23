@@ -17,6 +17,10 @@ public final class MessageQueueConstants {
     public static final String PRICE_UPDATED_QUEUE = "price.updated.queue";
     public static final String SCRAPE_FAILED_QUEUE = "scrape.failed.queue";
 
+    // Price alert subscription (User Service → Notification Service)
+    public static final String PRICE_ALERT_SUB_QUEUE = "price.alert.subscription.queue";
+    public static final String PRICE_ALERT_SUB_KEY = "price.alert.subscription";
+
     // Routing keys
     public static final String SCRAPE_REQUEST_KEY = "scrape.request";
     public static final String PRODUCT_SCRAPED_KEY = "product.scraped";

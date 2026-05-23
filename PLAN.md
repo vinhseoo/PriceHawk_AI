@@ -163,12 +163,12 @@
 ## PHASE 6 — Notification Service
 > Mục tiêu: Real-time push + email alerts khi phân tích xong hoặc giá thay đổi.
 
-- ⬜ **6.1** WebSocket STOMP setup + JWT auth handshake (validate X-User-Id từ header)
-- ⬜ **6.2** Redis session store cho WebSocket connections
-- ⬜ **6.3** Consumer `analysis.completed` → push WS notification đến user
-- ⬜ **6.4** Consumer `price.updated` → check wishlist target_price → push alert
-- ⬜ **6.5** Email digest (JavaMailSender): tổng hợp price alerts hàng tuần
-- ⬜ **6.6** Test: WS connection lifecycle, price alert trigger, email template
+- ✅ **6.1** WebSocket STOMP setup + JWT auth handshake (validate X-User-Id từ header)
+- ✅ **6.2** Redis session store cho WebSocket connections (`PriceAlertSubscriptionService`)
+- ✅ **6.3** Consumer `analysis.completed` → push WS notification đến user
+- ✅ **6.4** Consumer `price.updated` → check wishlist target_price → push alert
+- ✅ **6.5** Email digest (JavaMailSender): tổng hợp price alerts hàng tuần
+- ✅ **6.6** Test: WS connection lifecycle, price alert trigger, email template
 
 ---
 

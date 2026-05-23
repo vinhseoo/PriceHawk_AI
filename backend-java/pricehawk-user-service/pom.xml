@@ -14,6 +14,7 @@
         <dependency><groupId>com.pricehawk</groupId><artifactId>pricehawk-common</artifactId></dependency>
         <dependency><groupId>com.pricehawk</groupId><artifactId>pricehawk-security-starter</artifactId></dependency>
         <dependency><groupId>com.pricehawk</groupId><artifactId>pricehawk-data-starter</artifactId></dependency>
+        <dependency><groupId>com.pricehawk</groupId><artifactId>pricehawk-messaging-starter</artifactId></dependency>
         <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>
         <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-security</artifactId></dependency>
         <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-data-jpa</artifactId></dependency>
